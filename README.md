@@ -1,10 +1,56 @@
 # Micro-Services Architecture
 
+<div align="center">
+
+![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
+
 A complete microservices-based application built with Node.js, Express, MongoDB, and RabbitMQ.
+
+[![License](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![GitHub stars](https://img.shields.io/github/stars/shubhamdagar9854/MICRO-SERVICE.svg)](https://github.com/shubhamdagar9854/MICRO-SERVICE/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/shubhamdagar9854/MICRO-SERVICE.svg)](https://github.com/shubhamdagar9854/MICRO-SERVICE/network)
+
+</div>
+
+## 📋 Table of Contents
+
+- [Architecture Overview](#️-architecture-overview)
+- [Services](#-services)
+- [Project Structure](#-project-structure)
+- [Tech Stack](#️-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+- [API Documentation](#-api-documentation)
+- [Environment Variables](#-environment-variables)
+- [Development](#-development)
+- [Docker Support](#🐳-docker-support)
+- [Monitoring & Logging](#-monitoring--logging)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🏗️ Architecture Overview
 
 This project demonstrates a microservices architecture with the following services:
+
+```mermaid
+graph TB
+    Client[Client Application] --> Gateway[API Gateway :3000]
+    Gateway --> UserService[User Service :3001]
+    Gateway --> CaptainService[Captain Service :3002]
+    Gateway --> RideService[Ride Service :3003]
+    
+    UserService --> MongoDB1[(MongoDB)]
+    CaptainService --> MongoDB2[(MongoDB)]
+    RideService --> MongoDB3[(MongoDB)]
+    
+    UserService --> RabbitMQ[RabbitMQ]
+    CaptainService --> RabbitMQ
+    RideService --> RabbitMQ
+```
 
 - **User Service** - Handles user authentication, registration, and profile management
 - **Captain Service** - Manages captain/driver operations
@@ -42,7 +88,52 @@ This project demonstrates a microservices architecture with the following servic
   - Load balancing
   - Authentication middleware
 
-## 🛠️ Tech Stack
+## � Project Structure
+
+```
+MICRO-SERVICE/
+├── user/                    # User Service
+│   ├── controllers/         # Route controllers
+│   ├── models/             # Database models
+│   ├── routes/             # API routes
+│   ├── middleware/         # Custom middleware
+│   ├── service/            # Business logic
+│   ├── db/                 # Database configuration
+│   ├── app.js              # Express app setup
+│   ├── server.js           # Server startup
+│   └── package.json        # Dependencies
+├── captain/                # Captain Service
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── service/
+│   ├── db/
+│   ├── app.js
+│   ├── server.js
+│   └── package.json
+├── ride/                   # Ride Service
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── service/
+│   ├── db/
+│   ├── app.js
+│   ├── server.js
+│   └── package.json
+├── gateway/                # API Gateway
+│   ├── routes/
+│   ├── middleware/
+│   ├── app.js
+│   ├── server.js
+│   └── package.json
+├── user-backup/            # Backup of original user service
+├── .gitignore              # Git ignore file
+└── README.md               # Project documentation
+```
+
+## �️ Tech Stack
 
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
@@ -197,6 +288,54 @@ docker-compose up
 - Each service logs requests using Morgan
 - Logs can be aggregated using ELK stack or similar
 - Health check endpoints available for monitoring
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### 1. Port Already in Use
+```bash
+# Find process using the port
+netstat -tulpn | grep :3000
+# Kill the process
+sudo kill -9 <PID>
+```
+
+#### 2. MongoDB Connection Failed
+```bash
+# Check MongoDB status
+sudo systemctl status mongod
+# Start MongoDB
+sudo systemctl start mongod
+```
+
+#### 3. RabbitMQ Connection Issues
+```bash
+# Check RabbitMQ status
+sudo systemctl status rabbitmq-server
+# Restart RabbitMQ
+sudo systemctl restart rabbitmq-server
+```
+
+#### 4. Service Not Starting
+- Check if all environment variables are set
+- Verify database connections
+- Check service logs for errors
+
+#### 5. CORS Issues
+Make sure the API Gateway is properly configured with CORS middleware.
+
+### Debug Mode
+Enable debug logging by setting:
+```bash
+DEBUG=* npm start
+```
+
+### Health Check Endpoints
+Each service has a health check endpoint:
+- `GET /health` - Service health status
+- `GET /health/ready` - Readiness probe
+- `GET /health/live` - Liveness probe
 
 ## 🤝 Contributing
 
